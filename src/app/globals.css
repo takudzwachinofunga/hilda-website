@@ -1,0 +1,257 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Brand palette ──────────────────────────────────────────────────────── */
+:root {
+  --brand: #c8102e;
+  --ink: #111111;
+  --muted-ink: #666666;
+  --paper: #f7f7f7;
+  --line: #eaeaea;
+
+  /* shadcn/ui tokens mapped onto the brand palette (light, editorial). */
+  --radius: 0.5rem;
+  --background: #ffffff;
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--brand);
+  --primary-foreground: #ffffff;
+  --secondary: var(--paper);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper);
+  --muted-foreground: var(--muted-ink);
+  --accent: var(--paper);
+  --accent-foreground: var(--ink);
+  --destructive: var(--brand);
+  --border: var(--line);
+  --input: #e0e0e0;
+  --ring: var(--ink);
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted-ink);
+  --color-paper: var(--paper);
+  --color-line: var(--line);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-serif: var(--font-source-serif), Georgia, "Times New Roman", serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--brand) 18%, transparent);
+  }
+}
+
+/* ─── Editorial utilities ────────────────────────────────────────────────── */
+@utility container-site {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 82rem;
+  padding-inline: 1rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+}
+
+/* Headlines: Fraunces with tight leading and optical sizing. */
+@utility headline {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  font-variation-settings: "opsz" 96, "SOFT" 30;
+  text-wrap: balance;
+  transition: color 0.2s ease;
+}
+
+/* Section / category labels. */
+@utility kicker {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@utility select-chevron {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+}
+
+/* ─── Article body (public pages + editor) ───────────────────────────────── */
+.article-prose {
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  line-height: 1.75;
+  color: #1d1d1d;
+}
+.article-prose > * + * {
+  margin-top: 1.4em;
+}
+.article-prose > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 4.4em;
+  line-height: 0.82;
+  padding: 0.08em 0.1em 0 0;
+  color: var(--brand);
+}
+.article-prose h2,
+.article-prose h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.article-prose h2 {
+  font-size: 1.75em;
+  margin-top: 1.8em;
+}
+.article-prose h3 {
+  font-size: 1.35em;
+  margin-top: 1.6em;
+}
+.article-prose a {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.article-prose a:hover {
+  color: var(--ink);
+}
+.article-prose strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+.article-prose ul,
+.article-prose ol {
+  padding-left: 1.4em;
+}
+.article-prose ul {
+  list-style: disc;
+}
+.article-prose ol {
+  list-style: decimal;
+}
+.article-prose li + li {
+  margin-top: 0.4em;
+}
+.article-prose li::marker {
+  color: var(--brand);
+}
+.article-prose li > p {
+  margin: 0;
+}
+.article-prose blockquote {
+  border-left: 3px solid var(--brand);
+  padding: 0.1em 0 0.1em 1.2em;
+  font-family: var(--font-display);
+  font-size: 1.35em;
+  line-height: 1.4;
+  font-style: italic;
+  color: var(--ink);
+}
+.article-prose hr {
+  border: 0;
+  height: 1px;
+  background: var(--line);
+  margin-block: 2.5em;
+}
+.article-prose figure {
+  margin-block: 2em;
+}
+.article-prose figure img,
+.article-prose > img {
+  width: 100%;
+  height: auto;
+  cursor: zoom-in;
+  background: var(--paper);
+}
+.article-prose figcaption {
+  margin-top: 0.6em;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted-ink);
+}
+
+/* Wider-than-text inline images on large screens. */
+@media (width >= 64rem) {
+  .article-prose figure {
+    margin-inline: -4rem;
+  }
+}
+
+/* Editor-specific tweaks */
+.ProseMirror figure.is-selected img {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+}
+.ProseMirror figure img {
+  cursor: default;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #b3b3b3;
+}
+.ProseMirror > p:first-of-type::first-letter {
+  float: none;
+  font: inherit;
+  padding: 0;
+  color: inherit;
+}
+@media (width >= 64rem) {
+  .ProseMirror figure {
+    margin-inline: 0;
+  }
+}
