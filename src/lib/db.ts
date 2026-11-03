@@ -26,6 +26,26 @@ function createClient() {
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-export const db = globalForPrisma.prisma ?? createClient();
+function client(): PrismaClient {
+  // One client per process: reused across hot reloads in development and across
+  // warm invocations of the same serverless instance in production.
+  globalForPrisma.prisma ??= createClient();
+  return globalForPrisma.prisma;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+/**
+ * The Prisma client, created on first use rather than on import.
+ *
+ * This laziness matters for deployment: `next build` imports every route's module
+ * graph to collect page data, so a client constructed at import time would fail
+ * the build on any machine without database credentials — including a first
+ * deploy to Vercel before the environment variables are set. Connecting only when
+ * a query actually runs keeps the build independent of the database.
+ */
+export const db = new Proxy({} as PrismaClient, {
+  get(_target, property) {
+    const instance = client();
+    const value = instance[property as keyof PrismaClient];
+    return typeof value === "function" ? (value as (...a: unknown[]) => unknown).bind(instance) : value;
+  },
+});

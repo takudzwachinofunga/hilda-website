@@ -44,6 +44,14 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+/**
+ * The root layout reads site settings from the database for every page's metadata,
+ * so nothing here can be prerendered. Without this, `next build` tries to render
+ * the built-in `/_not-found` page — which renders inside this layout — and has to
+ * reach the database at build time. Every other route already opts out the same way.
+ */
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${serif.variable}`}>

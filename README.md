@@ -160,22 +160,26 @@ Then, in Vercel:
 1. Import the repository. Vercel detects Next.js; the default build and install
    commands are correct, so there is nothing to override and no `vercel.json`.
 2. Set these environment variables:
-   - `DATABASE_URL="file:./dev.db"` — **required even though Turso serves the
-     requests.** The Prisma schema reads `env("DATABASE_URL")`, and the build's
-     `prisma generate` step fails without it. The value is never connected to.
    - `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`
    - the three `CLOUDINARY_*` keys and `CLOUDINARY_FOLDER`
    - `NEXT_PUBLIC_SITE_URL` — optional. Left unset, a deployment uses its own
      Vercel domain, so canonical links, Open Graph tags, `robots.txt` and the
      sitemap are right from the first deploy. Set it once you add a custom domain.
+   - `DATABASE_URL` is **not** needed here. It is only the local SQLite file; when
+     the Turso variables are set the app never looks at it, and the build does not
+     read it either.
 3. Deploy. `prisma generate` runs in both `postinstall` and `build`, so the client
    is regenerated even when Vercel restores `node_modules` from its build cache.
 
 Notes specific to Vercel:
 
-- Every page that reads the database is `force-dynamic`, so nothing is prerendered
-  at build time and the build never needs database access — only a parseable
-  `DATABASE_URL`.
+- **The build needs no database at all.** Every route is `force-dynamic`, including
+  the root layout — which matters because the built-in `/_not-found` page renders
+  inside it, and prerendering that page would otherwise query the database at build
+  time. The Prisma client is also created on first query rather than on import
+  (`src/lib/db.ts`), so collecting page data cannot fail on missing credentials.
+  A deploy with no environment variables set still builds; it only fails when a
+  request actually tries to read data.
 - Images use a custom loader (`src/lib/image-sources.ts`), so Vercel's Image
   Optimization is not used and incurs no cost.
 - `engines.node` is `>=20.9.0`, matching Next 16's own requirement.
